@@ -1,0 +1,14 @@
+{
+  "notebook_code_cells": 6,
+  "notebook_errors": 0,
+  "embedded_plots": 3,
+  "saved_model_checks": {
+    "disjoint_rows": true,
+    "disjoint_feature_triples": true,
+    "preprocessing_fit_on_training_only": true,
+    "six_training_clusters": true,
+    "saved_models_reload_identically": true
+  },
+  "prediction_cli_passed": true,
+  "nonfinite_input_rejected": true
+}

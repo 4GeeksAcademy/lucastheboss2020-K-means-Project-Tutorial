@@ -1,0 +1,159 @@
+{
+  "data_audit": {
+    "source": "https://breathecode.herokuapp.com/asset/internal-link?id=439&path=housing.csv",
+    "sha256": "0e4a0bc8b337d88c95259a8ec05a58c662f26f87487f9cbf2448fe93207bcb5c",
+    "rows": 20640,
+    "features": [
+      "Latitude",
+      "Longitude",
+      "MedInc"
+    ],
+    "missing_values": {
+      "Latitude": 0,
+      "Longitude": 0,
+      "MedInc": 0
+    },
+    "duplicate_feature_rows": 5
+  },
+  "seed": 42,
+  "train_rows": 16512,
+  "test_rows": 4128,
+  "n_clusters": 6,
+  "selected_classifier": "logistic_regression",
+  "model_comparison": [
+    {
+      "model": "decision_tree",
+      "cv_accuracy": 0.9928536783457507,
+      "best_params": {
+        "classifier__max_depth": 15,
+        "classifier__min_samples_leaf": 1
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "cv_accuracy": 0.9952156263426619,
+      "best_params": {
+        "classifier__C": 10
+      }
+    }
+  ],
+  "train_silhouette_sample": 0.4111800315375111,
+  "test_metrics": {
+    "accuracy": 0.9953972868217055,
+    "classification_report": {
+      "0": {
+        "precision": 0.9979818365287588,
+        "recall": 0.9979818365287588,
+        "f1-score": 0.9979818365287588,
+        "support": 991.0
+      },
+      "1": {
+        "precision": 0.9963503649635036,
+        "recall": 0.9951397326852977,
+        "f1-score": 0.9957446808510638,
+        "support": 823.0
+      },
+      "2": {
+        "precision": 0.9984917043740573,
+        "recall": 0.9962377727614747,
+        "f1-score": 0.9973634651600753,
+        "support": 1329.0
+      },
+      "3": {
+        "precision": 0.9962335216572504,
+        "recall": 0.9943609022556391,
+        "f1-score": 0.9952963311382879,
+        "support": 532.0
+      },
+      "4": {
+        "precision": 0.972972972972973,
+        "recall": 0.9908256880733946,
+        "f1-score": 0.9818181818181818,
+        "support": 109.0
+      },
+      "5": {
+        "precision": 0.9798270893371758,
+        "recall": 0.9883720930232558,
+        "f1-score": 0.984081041968162,
+        "support": 344.0
+      },
+      "accuracy": 0.9953972868217055,
+      "macro avg": {
+        "precision": 0.9903095816389532,
+        "recall": 0.9938196708879702,
+        "f1-score": 0.9920475895774216,
+        "support": 4128.0
+      },
+      "weighted avg": {
+        "precision": 0.9954221491729133,
+        "recall": 0.9953972868217055,
+        "f1-score": 0.9954054326450981,
+        "support": 4128.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        989,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        819,
+        1,
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        1,
+        1324,
+        0,
+        0,
+        4
+      ],
+      [
+        1,
+        1,
+        0,
+        529,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        108,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        2,
+        0,
+        340
+      ]
+    ]
+  },
+  "verification": {
+    "disjoint_rows": true,
+    "disjoint_feature_triples": true,
+    "preprocessing_fit_on_training_only": true,
+    "six_training_clusters": true,
+    "saved_models_reload_identically": true
+  },
+  "versions": {
+    "python": "3.13.18",
+    "sklearn": "1.9.1",
+    "pandas": "3.1.1",
+    "numpy": "2.5.4",
+    "joblib": "1.6.0"
+  }
+}

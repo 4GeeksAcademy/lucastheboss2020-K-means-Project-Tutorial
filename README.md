@@ -1,112 +1,72 @@
-# Data Science Project Boilerplate
+# California Housing — K-means Project Tutorial
 
-This boilerplate is designed to kickstart data science projects by providing a basic setup for database connections, data processing, and machine learning model development. It includes a structured folder organization for your datasets and a set of pre-defined Python packages necessary for most data science tasks.
+Group 1990 California census block groups using **Latitude**, **Longitude** and **MedInc**, then train a supervised model to reproduce the six K-means groups. Housing prices are not inputs or targets.
 
-## Structure
+## Results
 
-The project is organized as follows:
+- 20,640 observations; 16,512 training and 4,128 held-out test rows.
+- No missing values in the three selected features. Five repeated feature triples are retained as distinct census blocks and kept together in all train/test and classifier CV splits.
+- StandardScaler and KMeans (six clusters, 20 initializations, seed 42) fitted on training rows only.
+- Five-fold stratified group CV: decision tree **99.29%**, logistic regression **99.52%**.
+- Selected classifier: logistic regression, C=10.
+- Held-out classifier agreement with K-means: **99.54%**, or **19 disagreements** across 4,128 rows.
+- Training silhouette on a seeded 3,000-row sample: **0.411**.
 
-- **`src/app.py`** → Main Python script where your project will run.
-- **`src/explore.ipynb`** → Notebook for exploration and testing. Once exploration is complete, migrate the clean code to `app.py`.
-- **`src/utils.py`** → Auxiliary functions, such as database connection.
-- **`requirements.txt`** → List of required Python packages.
-- **`models/`** → Will contain your SQLAlchemy model classes.
-- **`data/`** → Stores datasets at different stages:
-  - **`data/raw/`** → Raw data.
-  - **`data/interim/`** → Temporarily transformed data.
-  - **`data/processed/`** → Data ready for analysis.
+This accuracy measures reproduction of K-means labels. It does not measure housing-price prediction or agreement with independently verified categories. Cluster IDs are arbitrary, not rankings. CV compares classifiers against one fixed K-means teacher fitted on the outer training set; it is not a full nested evaluation of clustering.
 
+## Run
 
-## ⚡ Initial Setup in Codespaces (Recommended)
-
-No manual setup is required, as **Codespaces is automatically configured** with the predefined files created by the academy for you. Just follow these steps:
-
-1. **Wait for the environment to configure automatically**.
-   - All necessary packages and the database will install themselves.
-   - The automatically created `username` and `db_name` are in the **`.env`** file at the root of the project.
-2. **Once Codespaces is ready, you can start working immediately**.
-
-
-## 💻 Local Setup (Only if you can't use Codespaces)
-
-**Prerequisites**
-
-Make sure you have Python 3.11+ installed on your machine. You will also need pip to install the Python packages.
-
-**Installation**
-
-Clone the project repository to your local machine.
-
-Navigate to the project directory and install the required Python packages:
+Python 3.13 was used for the saved artifacts. In Codespaces, run these commands from the repository root:
 
 ```bash
-pip install -r requirements.txt
-```
-
-**Create a database (if necessary)**
-
-Create a new database within the Postgres engine by customizing and executing the following command:
-
-```bash
-$ psql -U postgres -c "DO \$\$ BEGIN 
-    CREATE USER my_user WITH PASSWORD 'my_password'; 
-    CREATE DATABASE my_database OWNER my_user; 
-END \$\$;"
-```
-Connect to the Postgres engine to use your database, manipulate tables, and data:
-
-```bash
-$ psql -U my_user -d my_database
-```
-
-Once inside PSQL, you can create tables, run queries, insert, update, or delete data, and much more!
-
-**Environment Variables**
-
-Create a .env file in the root directory of the project to store your environment variables, such as your database connection string:
-
-```makefile
-DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DB_NAME>"
-
-#example
-DATABASE_URL="postgresql://my_user:my_password@localhost:5432/my_database"
-```
-
-## Running the Application
-
-To run the application, execute the app.py script from the root directory of the project:
-
-```bash
+python -m pip install -r requirements.txt
 python src/app.py
 ```
 
-## Adding Models
+The script downloads the assignment CSV if needed, trains both model stages, evaluates, verifies saved-model predictions and regenerates reports. No API key or database is required. For a local installation, use a virtual environment before installing dependencies.
 
-To add SQLAlchemy model classes, create new Python script files within the models/ directory. These classes should be defined according to your database schema.
+Open **src/explore.ipynb** for the fully executed walkthrough, tables, visualizations and explanations. Run all cells to reproduce the workflow. The notebook and command-line script share the same implementation.
 
-Example model definition (`models/example_model.py`):
+Predict from saved models, passing latitude, longitude and median income in the original dataset units:
 
-```py
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
-
-Base = declarative_base()
-
-class ExampleModel(Base):
-    __tablename__ = 'example_table'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True)
+```bash
+python src/app.py --predict 37.88 -122.23 8.3252
 ```
 
-## Working with Data
+## Project files
 
-You can place your raw datasets in the data/raw directory, intermediate datasets in data/interim, and processed datasets ready for analysis in data/processed.
+- src/app.py — reusable data preparation, clustering, classifier comparison, evaluation, saving and prediction CLI.
+- src/explore.ipynb — executed five-stage project notebook.
+- models/kmeans_pipeline.joblib — fitted scaler and K-means.
+- models/classifier_pipeline.joblib — selected classifier and its fitted scaler.
+- reports/evaluation.json — data provenance, split sizes, model comparison, per-class metrics, confusion matrix, silhouette, versions and verification results.
+- reports/cluster_summary.csv and cluster_centers.csv — group summaries and centroids in original units.
+- reports/test_predictions.csv — held-out K-means and classifier labels with original row IDs.
+- reports/figures/ — training map, train/test overlay and confusion matrix.
+- requirements-project.txt — pinned versions used for this project; included by requirements.txt.
 
-To process data, you can modify the app.py script to include your data processing steps, using pandas for data manipulation and analysis.
+Raw and processed training data are ignored by Git and regenerated by the script. The source CSV checksum is recorded in evaluation.json. The original template's database helper is unused.
 
-## Contributors
+## Interpreting the groups
 
-This template was built as part of the [Data Science and Machine Learning Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning) by 4Geeks Academy by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Learn more about [4Geeks Academy BootCamp programs](https://4geeksacademy.com/us/programs) here.
+Northern clusters 0 and 3 differ in median income (2.88 versus 5.21 dataset units). Southern clusters 1 and 2 similarly separate higher and lower median income (5.13 versus 2.87). Cluster 4 has the highest median income (10.27) and only 414 training blocks. Cluster 5 has the lowest median income (2.54), with an average location between the northern and southern concentrations. Geographic overlap is expected because income is the third clustering feature.
 
-Other templates and resources like this can be found on the school's GitHub page.
+![Training and test clusters](reports/figures/train_test_clusters.png)
+
+Test points are crosses over the training map, using the same cluster colors. The similar pattern indicates consistent assignment to the learned partitions, not proof that six groups are objectively correct.
+
+![Classifier confusion matrix](reports/figures/confusion_matrix.png)
+
+## Verification and limitations
+
+The executed notebook has six completed code cells, no execution errors and three embedded plots. Checks confirm disjoint row IDs and feature triples across the outer split, six observed training clusters, training-only scaler fitting and identical predictions after reloading both saved pipelines. Prediction CLI was also exercised.
+
+Six clusters are prescribed by the exercise, not proven optimal. Scaling gives location and income comparable influence; changing feature weights changes the groups. Euclidean distance on latitude/longitude approximates geography. A random group split is not a spatial holdout, so performance does not demonstrate generalization to an entirely new region. Census-block averages do not describe individuals, and 1990 data is not a current housing-market estimate.
+
+## Source and assignment
+
+Dataset: https://breathecode.herokuapp.com/asset/internal-link?id=439&path=housing.csv
+
+Assignment: https://github.com/4GeeksAcademy/k-means-project-tutorial
+
+Built from the 4GeeksAcademy machine-learning-python-template. This repository is prepared for review; submission and any personal authorship acknowledgement remain with the learner.
